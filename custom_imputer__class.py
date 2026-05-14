@@ -35,3 +35,38 @@ class HorsepowerImputer(BaseEstimator, TransformerMixin):
     
     def set_output(self, transform = "pandas"):
         return self
+    
+class DataCleaner(BaseEstimator, TransformerMixin):
+    def __init__(self):
+        pass
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+
+        X = X.copy()
+
+        if 'Model_Year' in X.columns:
+            X['Model_Year'] = X['Model_Year'].mask(X["Model_Year"] < 1900, np.nan)
+
+        if 'Mileage' in X.columns:
+            X['Mileage'] = X['Mileage'].mask(X["Mileage"] > 800000, np.nan)
+        
+        if 'Horsepower' in X.columns:
+            X['Horsepower'] = X['Horsepower'].mask(X["Horsepower"] > 1500, np.nan)
+
+        if 'Engine_Size' in X.columns:
+            X["Engine_Size"] = X["Engine_Size"].astype(str).str.replace(' cc', '', case=False)
+            X["Engine_Size"] = pd.to_numeric(X["Engine_Size"], errors='coerce')
+            X["Engine_Size"] = X["Engine_Size"].mask(X["Engine_Size"] > 10, X["Engine_Size"] / 1000)
+
+        if 'Fuel_Type' in X.columns:
+            X['Fuel_Type'] = X['Fuel_Type'].astype(str).str.lower().str.strip()
+            
+            if 'Brand' in X.columns:
+                X.loc[X['Brand'] == 'Tesla', 'Fuel_Type'] = 'electric'
+
+        return X
+    def set_output(self, transform = "pandas"):
+        return self
