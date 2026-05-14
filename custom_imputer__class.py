@@ -1,6 +1,6 @@
 from sklearn.base import BaseEstimator, TransformerMixin
 import pandas as pd
-
+import numpy as np
 class HorsepowerEngineRatio(BaseEstimator, TransformerMixin):
     
     def __init__(self, hp_col="Horsepower", engine_col="Engine_Size"):
